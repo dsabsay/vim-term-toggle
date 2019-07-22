@@ -7,14 +7,25 @@ let g:term_toggle_default_height = 10
 " TODO: need to handle when a terminal buffer is closed (e.g. exiting the
 " shell). Need to remove from terms list and set termIsOpen to false.
 
-" TODO: Use <Plug> to provide default keybindings OR just provide public
-" functions
+" Commands
+command TermClose :call s:TermClose()
+command TermToggle :call s:TermToggle()
+command -nargs=1 TermSwitch :call s:TermSwitch(<args>)
 
-noremap <leader>t :call TermToggle()<CR>
-command! -nargs=1 TermSwitch :call TermSwitch(<args>)
-noremap <leader>t0 :call TermSwitch(0)
-noremap <leader>t1 :call TermSwitch(1)
-noremap <leader>t2 :call TermSwitch(2)
+" Plugin mappings
+nnoremap <silent> <Plug>TermToggle :TermToggle<CR>
+tnoremap <silent> <Plug>TermToggle <c-w>:TermToggle<CR>
+tnoremap <silent> <Plug>TermSwitch0 <c-w>:TermSwitch 0<CR>
+tnoremap <silent> <Plug>TermSwitch1 <c-w>:TermSwitch 1<CR>
+tnoremap <silent> <Plug>TermSwitch2 <c-w>:TermSwitch 2<CR>
+
+" Default mappings
+" command! -nargs=1 TermSwitch :call TermSwitch(<args>)
+tmap <c-t> <Plug>TermToggle
+nmap <c-t> <Plug>TermToggle
+tmap <c-w>0 <Plug>TermSwitch0
+tmap <c-w>1 <Plug>TermSwitch1
+tmap <c-w>2 <Plug>TermSwitch2
 
 " Moves cursor to terminal window.
 function TermFocus()
@@ -24,7 +35,7 @@ function TermFocus()
 endfunction
 
 " Switches to the terminal identified by <termNum>.
-function TermSwitch(termNum)
+function s:TermSwitch(termNum)
     if a:termNum < 0 || a:termNum > len(s:terms) - 1
         return
     endif
@@ -36,7 +47,7 @@ function TermSwitch(termNum)
 endfunction
 
 " Toggles the terminal window on/off.
-function TermToggle()
+function s:TermToggle()
     if s:termIsOpen
         let s:termIsOpen = 0
         execute s:termWindowNum . 'hide'
@@ -46,8 +57,7 @@ function TermToggle()
 endfunction
 
 " Closes the current terminal session.
-function TermClose()
-
+function s:TermClose()
     if len(s:terms) == 1
         bdelete!
         let s:terms = []
@@ -58,7 +68,7 @@ function TermClose()
         let s:terms = s:terms[0:s:currentTerm - 1] + s:terms[s:currentTerm + 1:]
         let s:currentTerm = len(s:terms) - 1
         let s:termIsOpen = 0  " bdelete will have closed the window
-        call TermToggle()
+        call s:TermToggle()
     endif
 endfunction
 
@@ -123,5 +133,5 @@ function Test()
     call AddNewTerm()
     call AddNewTerm()
     call AddNewTerm()
-    call TermToggle()
+    call s:TermToggle()
 endfunction
