@@ -11,6 +11,7 @@ let g:term_toggle_default_height = 10
 command TermClose :call s:TermClose()
 command TermToggle :call s:TermToggle()
 command -nargs=1 TermSwitch :call s:TermSwitch(<args>)
+command TermNew :call s:AddNewTerm()
 
 " Plugin mappings
 nnoremap <silent> <Plug>TermToggle :TermToggle<CR>
@@ -18,6 +19,7 @@ tnoremap <silent> <Plug>TermToggle <c-w>:TermToggle<CR>
 tnoremap <silent> <Plug>TermSwitch0 <c-w>:TermSwitch 0<CR>
 tnoremap <silent> <Plug>TermSwitch1 <c-w>:TermSwitch 1<CR>
 tnoremap <silent> <Plug>TermSwitch2 <c-w>:TermSwitch 2<CR>
+tnoremap <silent> <Plug>TermSwitch3 <c-w>:TermSwitch 3<CR>
 
 " Default mappings
 " command! -nargs=1 TermSwitch :call TermSwitch(<args>)
@@ -26,6 +28,7 @@ nmap <c-t> <Plug>TermToggle
 tmap <c-w>0 <Plug>TermSwitch0
 tmap <c-w>1 <Plug>TermSwitch1
 tmap <c-w>2 <Plug>TermSwitch2
+tmap <c-w>3 <Plug>TermSwitch3
 
 " Moves cursor to terminal window.
 function TermFocus()
@@ -38,6 +41,10 @@ endfunction
 function s:TermSwitch(termNum)
     if a:termNum < 0 || a:termNum > len(s:terms) - 1
         return
+    endif
+
+    if s:termIsOpen == 0
+        call s:TermOpenWindow()
     endif
 
     let s:currentTerm = a:termNum
@@ -118,7 +125,7 @@ endfunction
 
 " Creates a new terminal buffer and appends it to the terms list. Does not
 " create a window.
-function AddNewTerm()
+function s:AddNewTerm()
     let options = {
         \ 'term_name': 'term-toggle-' . len(s:terms),
         \ 'term_finish': 'open',
@@ -126,7 +133,7 @@ function AddNewTerm()
     \ }
     let bufNum = term_start(&shell, options)
     let s:terms = add(s:terms, bufNum)
-    let s:currentTerm = len(s:terms) - 1
+    call s:TermSwitch(len(s:terms) - 1)
 endfunction
 
 function Test()
