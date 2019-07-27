@@ -1,5 +1,5 @@
 let s:terms = []  " List of buffer numbers
-let s:currentTerm = -1  " Index into terms
+let s:currentTerm = 0  " Index into terms
 let s:termIsOpen = 0
 let s:termWindowNum = -1
 let g:term_toggle_default_height = 10
@@ -8,6 +8,7 @@ let g:term_toggle_default_height = 10
 " shell). Need to remove from terms list and set termIsOpen to false.
 
 " Commands
+" These commands represent the "public" API.
 command TermClose :call s:TermClose()
 command TermToggle :call s:TermToggle()
 command -nargs=1 TermSwitch :call s:TermSwitch(<args>)
@@ -58,9 +59,27 @@ function s:TermToggle()
     if s:termIsOpen
         let s:termIsOpen = 0
         execute s:termWindowNum . 'hide'
-    else
-        call s:TermOpenWindow()
+        return
     endif
+
+    if len(s:terms) == 0  " Create a term if none exist yet
+        call s:AddNewTerm()
+    endif
+    call s:TermOpenWindow()
+endfunction
+
+" Returns a copy of list with the item at index removed.
+" index must be a positive number less than the length of the list.
+function s:Remove(index, list)
+    if a:index < 0 || a:index > len(a:list) - 1
+        throw "remove(): Invalid index."
+    endif
+
+    if a:index == 0
+        return a:list[1:]
+    endif
+
+    return a:list[:a:index - 1] + a:list[a:index + 1:]
 endfunction
 
 " Closes the current terminal session.
@@ -71,9 +90,10 @@ function s:TermClose()
         let s:currentTerm = -1
         let s:termIsOpen = 0
     else
-        bdelete!
-        let s:terms = s:terms[0:s:currentTerm - 1] + s:terms[s:currentTerm + 1:]
+        let s:terms = s:Remove(s:currentTerm, s:terms)
+        echom "s:terms: " . join(s:terms, ", ")
         let s:currentTerm = len(s:terms) - 1
+        bdelete!
         let s:termIsOpen = 0  " bdelete will have closed the window
         call s:TermToggle()
     endif
@@ -83,10 +103,6 @@ endfunction
 function s:TermOpenWindow()
     if s:termIsOpen
         return
-    endif
-
-    if len(s:terms) == 0  " Create a term if none exist yet
-        call AddNewTerm()
     endif
 
     let s:termIsOpen = 1
@@ -133,7 +149,6 @@ function s:AddNewTerm()
     \ }
     let bufNum = term_start(&shell, options)
     let s:terms = add(s:terms, bufNum)
-    call s:TermSwitch(len(s:terms) - 1)
 endfunction
 
 function Test()
