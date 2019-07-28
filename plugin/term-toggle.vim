@@ -157,10 +157,3 @@ function s:AddNewTerm()
     let bufNum = term_start(&shell, options)
     let s:terms = add(s:terms, bufNum)
 endfunction
-
-function Test()
-    call AddNewTerm()
-    call AddNewTerm()
-    call AddNewTerm()
-    call s:TermToggle()
-endfunction
