@@ -22,3 +22,4 @@
 
 - [x] Implement AddNewTerm feature
 - [ ] Implement shortcut to close all terminals?
+- [x] Allow user to configure the shortcut used to switch terminals (i.e. <user mapping>1, <user mapping>2, etc.)

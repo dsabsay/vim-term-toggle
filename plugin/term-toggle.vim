@@ -1,11 +1,7 @@
-let s:terms = []  " List of buffer numbers
-let s:currentTerm = 0  " Index into terms
-let s:termIsOpen = 0
-let s:termWindowNum = -1
+" User-configurable settings
+let g:term_toggle_disable_default_mappings = 0
 let g:term_toggle_default_height = 10
-
-" TODO: need to handle when a terminal buffer is closed (e.g. exiting the
-" shell). Need to remove from terms list and set termIsOpen to false.
+let g:term_toggle_switch_mapping = 0
 
 " Commands
 " These commands represent the "public" API.
@@ -14,22 +10,33 @@ command TermToggle :call s:TermToggle()
 command -nargs=1 TermSwitch :call s:TermSwitch(<args>)
 command TermNew :call s:AddNewTerm()
 
-" Plugin mappings
-nnoremap <silent> <Plug>TermToggle :TermToggle<CR>
-tnoremap <silent> <Plug>TermToggle <c-w>:TermToggle<CR>
-tnoremap <silent> <Plug>TermSwitch0 <c-w>:TermSwitch 0<CR>
-tnoremap <silent> <Plug>TermSwitch1 <c-w>:TermSwitch 1<CR>
-tnoremap <silent> <Plug>TermSwitch2 <c-w>:TermSwitch 2<CR>
-tnoremap <silent> <Plug>TermSwitch3 <c-w>:TermSwitch 3<CR>
+" Create mappings
+if g:term_toggle_disable_default_mappings == 0
+    tmap <c-t> :TermToggle<CR>
+    nmap <c-t> :TermToggle<CR>
 
-" Default mappings
-" command! -nargs=1 TermSwitch :call TermSwitch(<args>)
-tmap <c-t> <Plug>TermToggle
-nmap <c-t> <Plug>TermToggle
-tmap <c-w>0 <Plug>TermSwitch0
-tmap <c-w>1 <Plug>TermSwitch1
-tmap <c-w>2 <Plug>TermSwitch2
-tmap <c-w>3 <Plug>TermSwitch3
+    " Create default TermSwitch mappings
+    for i in range(10)
+        execute 'tmap ' . "<C-w>" . i . " <c-w>" . ':TermSwitch ' . i . "<CR>"
+    endfor
+elseif g:term_toggle_switch_mapping
+    " Create user-configured mapping
+    for i in range(10)
+        execute 'tmap ' . g:term_toggle_switch_mapping . i . " <c-w>" . ':TermSwitch ' . i . "<CR>"
+    endfor
+endif
+
+
+
+" Internal state
+let s:terms = []  " List of buffer numbers
+let s:currentTerm = 0  " Index into terms
+let s:termIsOpen = 0
+let s:termWindowNum = -1
+
+" TODO: need to handle when a terminal buffer is closed (e.g. exiting the
+" shell). Need to remove from terms list and set termIsOpen to false.
+
 
 " Moves cursor to terminal window.
 function TermFocus()

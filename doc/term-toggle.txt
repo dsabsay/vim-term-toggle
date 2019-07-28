@@ -1,0 +1,113 @@
+*term-toggle.txt* Easy interaction with the terminal inside Vim.
+
+
+
+                                  term-toggle
+
+
+         A simple plugin that provides a terminal experience similar to
+                         that found in VS Code or Atom.
+
+
+================================================================================
+CONTENTS                                                           *term-toggle*
+                                                          *term-toggle-contents*
+
+    1. Usage .............................. |term-toggle-usage|
+    2. Commands ........................... |term-toggle-commands|
+    3. Mappings ........................... |term-toggle-mappings|
+    4. Configuration ...................... |term-toggle-configuration|
+
+================================================================================
+1. Usage                                                     *term-toggle-usage*
+
+This plugin provides a set of commands with default key bindings.
+
+Open the Terminal window with the command >
+    :TermToggle
+(mapped to <C-t> by default).
+
+Hide the Terminal window with the same command.
+
+Create a new terminal session with the command >
+    :TermNew
+
+Switch between terminals with the command >
+    :TermSwitch <number>
+(mapped to <C-w><number> by default). The statusline of the terminal window
+shows how many terminals you have started and highlights the currently active
+one.
+
+For example, to switch to terminal #1, you'd type: >
+    <C-w>1 
+or >
+    :TermSwitch 1
+
+Close the current terminal with the command >
+    :TermClose
+
+================================================================================
+2. Commands                                               *term-toggle-commands*
+
+The following commands are provided:
+
+    *:TermToggle*             Toggles a Terminal window on or off in the bottom
+                            part of the screen.
+
+    *:TermNew*                Opens a new terminal session (creates a new
+                            terminal buffer).
+
+    *:TermSwitch* <number>    Switches to the terminal specified by <number>.
+
+    *:TermClose*             Closes the current terminal (deletes the terminal
+                            buffer).
+
+================================================================================
+3. Mappings                                               *term-toggle-mappings*
+
+The following mappings are enabled by default.
+
+    Mapping         Applicable modes        Equivalent command
+    -------         ----------------        ------------------
+    <C-t>           Normal, Terminal-Job    :TermToggle
+    <C-w><number>   Terminal-Job            :TermSwitch <number>
+    
+The default mappings can be disabled like this: >
+    let g:term_toggle_disable_default_mappings = 1
+<
+================================================================================
+4. Configuration                                     *term-toggle-configuration*
+
+|g:term_toggle_disable_default_mappings|
+
+    Disables the default key mappings like so >
+        let g:term_toggle_disable_default_mappings = 1
+<
+    This will disable the default mappings. However, if you set
+    *g:term_toggle_switch_mapping*, switch mappings will be created.
+
+    Default: 0 (false)
+
+|g:term_toggle_switch_mapping|
+
+    Controls how the |TermSwitch| feature is mapped. For example, if you want
+    to switch terminals by pressing Ctrl+i <number>, use the following: >
+        let g:term_toggle_switch_mapping = "<C-i>"
+<
+    Note that the double-quotes are required.
+
+    This will work even if *g:term_toggle_disable_default_mappings* has
+    been set.
+
+    Default: <C-w>
+
+|g:term_toggle_default_height|
+
+    Controls the default height of the terminal window. Change with >
+        let g:term_toggle_default_height = 20
+<
+    Default: 10
+
+================================================================================
+
+vim:tw=78:ft=help
