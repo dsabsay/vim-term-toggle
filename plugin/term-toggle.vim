@@ -12,7 +12,7 @@ command TermNew :call s:AddNewTerm()
 
 " Create mappings
 if g:term_toggle_disable_default_mappings == 0
-    tmap <c-t> :TermToggle<CR>
+    tmap <c-t> <c-w>:TermToggle<CR>
     nmap <c-t> :TermToggle<CR>
 
     " Create default TermSwitch mappings
