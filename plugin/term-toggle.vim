@@ -41,7 +41,7 @@ let s:termWindowID = -1
 " Moves cursor to terminal window.
 function TermFocus()
     if s:termIsOpen
-        execute s:termWindowID . 'wincmd w'
+        execute win_id2win(s:termWindowID) . 'wincmd w'
     endif
 endfunction
 
@@ -65,7 +65,7 @@ endfunction
 function s:TermToggle()
     if s:termIsOpen
         let s:termIsOpen = 0
-        execute s:termWindowID . 'hide'
+        execute win_id2win(s:termWindowID) . 'hide'
         return
     endif
 
