@@ -32,7 +32,7 @@ endif
 let s:terms = []  " List of buffer numbers
 let s:currentTerm = 0  " Index into terms
 let s:termIsOpen = 0
-let s:termWindowNum = -1
+let s:termWindowID = -1
 
 " TODO: need to handle when a terminal buffer is closed (e.g. exiting the
 " shell). Need to remove from terms list and set termIsOpen to false.
@@ -41,7 +41,7 @@ let s:termWindowNum = -1
 " Moves cursor to terminal window.
 function TermFocus()
     if s:termIsOpen
-        execute s:termWindowNum . 'wincmd w'
+        execute s:termWindowID . 'wincmd w'
     endif
 endfunction
 
@@ -65,7 +65,7 @@ endfunction
 function s:TermToggle()
     if s:termIsOpen
         let s:termIsOpen = 0
-        execute s:termWindowNum . 'hide'
+        execute s:termWindowID . 'hide'
         return
     endif
 
@@ -115,7 +115,7 @@ function s:TermOpenWindow()
     let s:termIsOpen = 1
     execute 'bot ' . g:term_toggle_default_height . 'new'
     execute 'buffer ' . s:terms[s:currentTerm]
-    let s:termWindowNum = winnr()
+    let s:termWindowID = win_getid()
     setlocal statusline=%!TermToggleStatusLine()
 endfunction
 
